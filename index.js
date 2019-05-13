@@ -89,23 +89,31 @@ const openRoom = ({ roomid, speakers = {}, currentFilename = undefined }) => new
       }
     }
   })
+  let autorestart = setTimeout(() => {
+    console.log(`AUTORESTART: ${roomid}`)
+    ws.close()
+    resolve({ roomid, speakers, currentFilename })
+  }, 1000 * 60 * 60 * 18)
   ws.on('heartbeat', () => {
     lastHeartbeat = new Date().getTime()
     setTimeout(() => {
       if (new Date().getTime() - lastHeartbeat > 1000 * 30) {
         console.log(`TIMEOUT: ${roomid}`)
         ws.close()
+        clearTimeout(autorestart)
         resolve({ roomid, speakers, currentFilename })
       }
     }, 1000 * 45)
   })
   ws.once('close', async () => {
     console.log(`CLOSE: ${roomid}`)
+    clearTimeout(autorestart)
     resolve({ roomid, speakers, currentFilename })
   })
   ws.on('error', async () => {
     console.log(`ERROR: ${roomid}`)
     ws.close()
+    clearTimeout(autorestart)
     resolve({ roomid, speakers, currentFilename })
   })
 })
