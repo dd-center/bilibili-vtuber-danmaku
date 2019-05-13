@@ -17,10 +17,11 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 let rooms = {}
 
-const openRoom = ({ roomid, speakers = {}, currentFilename = undefined }) => {
+const openRoom = ({ roomid, speakers = {}, currentFilename = undefined }) => new Promise(resolve => {
   let ws = new LiveWS(roomid)
   rooms[roomid] = ws
   let lastTime = ''
+  let lastHeartbeat = 0
   // let storm = []
   ws.once('live', () => {
     console.log(`READY: ${roomid}`)
@@ -88,27 +89,41 @@ const openRoom = ({ roomid, speakers = {}, currentFilename = undefined }) => {
       }
     }
   })
-  ws.once('open', () => {
-    ws.once('close', async () => {
-      console.log(`CLOSE: ${roomid}`)
-      if (rooms[roomid]) {
-        await wait(500)
-        console.log(`REOPEN: ${roomid}`)
-        openRoom({ roomid, speakers, currentFilename })
+  ws.on('heartbeat', () => {
+    lastHeartbeat = new Date().getTime()
+    setTimeout(() => {
+      if (new Date().getTime() - lastHeartbeat > 1000 * 30) {
+        console.log(`TIMEOUT: ${roomid}`)
+        ws.close()
+        resolve({ roomid, speakers, currentFilename })
       }
-    })
+    }, 1000 * 45)
+  })
+  ws.once('close', async () => {
+    console.log(`CLOSE: ${roomid}`)
+    resolve({ roomid, speakers, currentFilename })
   })
   ws.on('error', async () => {
     console.log(`ERROR: ${roomid}`)
-    ws.terminate()
-    if (rooms[roomid]) {
-      await wait(500)
-      console.log(`REOPEN: ${roomid}`)
-      openRoom({ roomid, speakers, currentFilename })
-    }
+    ws.close()
+    resolve({ roomid, speakers, currentFilename })
   })
+})
+
+const open = async roomid => {
+  let object = await openRoom({ roomid })
+  for (;;) {
+    await wait(500)
+    if (!rooms[roomid]) {
+      console.log(`DISABLE: ${roomid}`)
+      return
+    }
+    console.log(`REOPEN: ${roomid}`)
+    object = await openRoom(object)
+  }
 }
 
+;
 (async () => {
   for (;;) {
     let folders = await fs.readdir('.')
@@ -131,7 +146,7 @@ const openRoom = ({ roomid, speakers = {}, currentFilename = undefined }) => {
             await fs.mkdir(String(roomid))
           }
           console.log(`OPEN: ${i + 1}/${vtbs.length} - ${mid} - ${roomid}`)
-          openRoom({ roomid: roomid })
+          open(roomid)
         }
       }
     }
@@ -139,7 +154,6 @@ const openRoom = ({ roomid, speakers = {}, currentFilename = undefined }) => {
     for (let i = 0; i < roomsOpen.length; i++) {
       if (rooms[roomsOpen[i]]) {
         if (!roomsEnable.includes(Number(roomsOpen[i]))) {
-          console.log(`DISABLE: ${roomsOpen[i]}`);
           rooms[roomsOpen[i]].close()
           rooms[roomsOpen[i]] = false
         }
