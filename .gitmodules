@@ -1,3 +1,6 @@
 [submodule "dictionary"]
 	path = dictionary
 	url = https://github.com/bilibili-dd-center/dictionary.git
+[submodule "src"]
+	path = src
+	url = https://github.com/bilibili-dd-center/bilibili-live-danmaku-recorder
