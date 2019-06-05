@@ -1,1 +1,1 @@
-require('./src/monster')
+require('./src/monster')(require('./json'))
