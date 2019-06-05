@@ -48,7 +48,8 @@ const read = async (roomid, date, getUname = false) => {
       continue
     }
 
-    let meta = info[i].split(':')
+    let [mid, ...text] = info[i].split(':')
+    let meta = [mid, text.join(':')]
     let danmaku = { time: currentMinutes }
     if (!Number.isNaN(Number(meta[0])) && meta[1]) {
       let mid = Number(meta[0])
