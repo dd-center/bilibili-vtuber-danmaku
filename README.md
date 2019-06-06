@@ -108,6 +108,38 @@ read(12235923, '2019-6-4')
 * speakerNum: 总发言人数, 其实是 `Object.keys(speakers).length`
 * raw: txt的文本
 
+### Socket.io
+
+https://api.vtbs.moe/vds
+
+```javascript
+const io = require('socket.io-client')
+const socket = io('https://api.vtbs.moe/vds')
+```
+
+#### 订阅 (join)
+
+```javascript
+socket.emit('join', roomid) // 订阅特定房间
+socket.emit('join', 'all')  // 订阅所有房间 
+```
+
+#### 取消订阅 (leave)
+
+```javascript
+socket.emit('leave', roomid) // 取消订阅特定房间
+socket.emit('leave', 'all')  // 取消订阅所有房间 
+```
+
+注意：订阅了一部分房间之后取消订阅 `all` 并不会取消所有房间，只会取消之前订阅的 `all`。
+
+#### 弹幕事件
+
+```javascript
+socket.on('danmaku', console.log)
+// {message: "233", roomid: 12235923, mid: 3499295}
+```
+
 ### Raw:TXT格式
 
 #### 弹幕
