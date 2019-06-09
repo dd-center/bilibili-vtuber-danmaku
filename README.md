@@ -2,7 +2,7 @@
 
 Vtuber直播间的弹幕哟
 
-### JSON格式
+### JSON
 
 ```javascript
 const { rooms, records, roomsRecords, read } = require('./json')
