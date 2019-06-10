@@ -40,12 +40,20 @@ const read = async (roomid, date, getUname = false) => {
       continue
     }
 
-    if (info[i].startsWith('SPEAKERNUM') && info[i].split(';')[1]) {
-      info[i].split(';')[1].split(',')
-        .map(user => user.split(':'))
-        .map(user => ({ mid: user[0], uname: user[1] }))
-        .forEach(({ mid, uname }) => result.speakers[mid].uname = uname)
-      continue
+    if (info[i].startsWith('SPEAKERNUM')) {
+      if (info[i].split(';')[1]) {
+        info[i].split(';')[1].split(',')
+          .map(user => user.split(':'))
+          .map(user => ({ mid: user[0], uname: user[1] }))
+          .forEach(({ mid, uname }) => {
+            if (result.speakers[mid]) {
+              result.speakers[mid].uname = uname
+            }
+          })
+        continue
+      } else {
+        result.speakerNum = Number(info[i].replace('SPEAKERNUM', ''))
+      }
     }
 
     let [mid, ...text] = info[i].split(':')
