@@ -56,22 +56,27 @@ const read = async (roomid, date, getUname = false) => {
       continue
     }
 
-    let [mid, ...text] = info[i].split(':')
-    let meta = [mid, text.join(':')]
+    let [time, mid, ...text] = info[i].split(':')
     let danmaku = { time: currentMinutes }
-    if (!Number.isNaN(Number(meta[0])) && meta[1]) {
-      let mid = Number(meta[0])
-      danmaku.mid = mid
-      danmaku.text = meta[1]
+    if (time > 946656000000 && !Number.isNaN(Number(mid))) {
+      danmaku.timestamp = Number(time)
+      danmaku.mid = Number(mid)
+      danmaku.text = text.join(':')
       if (!result.speakers[mid]) {
         result.speakers[mid] = { speakerNum: 0 }
       }
       result.speakers[mid].speakerNum++
+    } else if (!Number.isNaN(Number(time)) && mid) {
+      danmaku.mid = Number(time)
+      danmaku.text = [mid, ...text].join(':')
+      if (!result.speakers[time]) {
+        result.speakers[time] = { speakerNum: 0 }
+      }
+      result.speakers[time].speakerNum++
     } else {
       danmaku.text = info[i]
     }
     result.danmaku.push(danmaku)
-
   }
 
   if (Object.keys(result.speakers).length) {
