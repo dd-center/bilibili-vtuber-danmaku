@@ -101,6 +101,7 @@ read(12235923, '2019-6-4')
   * time: 单位分钟, 从今天0:0算起发送弹幕的时间
   * mid: 发送者mid
   * text: 弹幕文本
+  * timestamp: 精确到毫秒的时间戳
 * speakers: Object, 发过弹幕的人, Key=mid
   * speakerNum: 发了几条弹幕
   * uname: 用户名
@@ -146,7 +147,7 @@ socket.on('danmaku', console.log)
 
 纯文本，记录发送者信息
 
-`[mid]:[text]`
+`[timestamp]:[mid]:[text]`
 
 #### 时间戳
 
