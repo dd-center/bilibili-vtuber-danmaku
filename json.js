@@ -50,10 +50,10 @@ const read = async (roomid, date, getUname = false) => {
               result.speakers[mid].uname = uname
             }
           })
-        continue
       } else {
         result.speakerNum = Number(info[i].replace('SPEAKERNUM', ''))
       }
+      continue
     }
 
     let [mid, ...text] = info[i].split(':')
