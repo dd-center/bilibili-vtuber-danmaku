@@ -1,13 +1,5 @@
 {
   "dependencies": {
-    "bili-api": "^1.0.1",
-    "bilibili-live-ws": "^1.1.2",
-    "dotenv": "^8.0.0",
-    "influx": "^5.1.0",
-    "nodejieba": "^2.3.0",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.4",
-    "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0"
   }
 }
