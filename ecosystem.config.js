@@ -1,6 +1,6 @@
 module.exports = {
   apps: [{
-    name: 'vd',
+    name: 'vdr',
     script: 'index.js',
     instances: 1,
     autorestart: true,
