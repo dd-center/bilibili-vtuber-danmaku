@@ -1,1 +1,3 @@
 1619870049763:1555153:点歌，wherever you are
+SPEAKERNUM1;1555153:有栖曜_Channel:1
+V2
